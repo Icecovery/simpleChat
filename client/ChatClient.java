@@ -66,15 +66,100 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromClientUI(String message)
   {
-    try
+    message = message.trim();
+    if (message.length() == 0)
+      return;
+    if (message.charAt(0) == '#')
     {
-      sendToServer(message);
+      try 
+      {
+        message = message.substring(1);
+        String[] commands = message.split(" ");
+        if (commands.length == 0) // not command given
+        {
+          clientUI.display("Not command given");
+          return;
+        }
+        switch (commands[0]) {
+          case "quit":
+            quit();
+            break;
+          case "logoff":
+            if (!isConnected()) // if not already connected
+            {
+              clientUI.display("No current connection");
+              return;
+            }
+            closeConnection();
+            clientUI.display("Logged off");
+            break;
+          case "sethost":
+            if (isConnected()) // if already connected, display error msg
+            {
+              clientUI.display("Cannot set host while connected to a server");
+              return;
+            }
+            if (commands.length < 2) // if no host in command
+            {
+              clientUI.display("Please simplify a host: #sethost <host>");
+              return;
+            }
+            setHost(commands[1]);
+            clientUI.display("Host set to " + getHost());
+            break;
+          case "setport":
+            if (isConnected()) // if already connected, display error msg
+            {
+              clientUI.display("Cannot set port while connected to a server");
+              return;
+            }
+            if (commands.length < 2) // if no port in command
+            {
+              clientUI.display("Please simplify a port: #setport <port>");
+              return;
+            }
+            setPort(Integer.parseInt(commands[1]));
+            clientUI.display("Port set to " + String.valueOf(getPort()));
+            break;
+          case "login":
+            if (isConnected()) // if already connected
+            {
+              clientUI.display("Already connected");
+              return;
+            }
+            openConnection();
+            clientUI.display("Logged in");
+            break;
+          case "gethost":
+            clientUI.display(getHost());
+            break;
+          case "getport":
+            clientUI.display(String.valueOf(getPort()));
+            break;
+          default:
+            clientUI.display("Unknown Command");
+            break;
+        }
+      } 
+      catch (Exception e) 
+      {
+        clientUI.display("An exception " + e.getLocalizedMessage() + " occurred at following location.  Terminating client.");
+        e.printStackTrace();
+        quit();
+      }
+      
     }
-    catch(IOException e)
+    else
     {
-      clientUI.display
-        ("Could not send message to server.  Terminating client.");
-      quit();
+      try 
+      {
+        sendToServer(message);
+      } 
+      catch (IOException e) 
+      {
+        clientUI.display("Could not send message to server.  Terminating client.");
+        quit();
+      }
     }
   }
   
@@ -93,7 +178,7 @@ public class ChatClient extends AbstractClient
 
   public void connectionClosed()
   {
-    clientUI.display("Connection closed.");
+    //clientUI.display("Connection closed.");
   }
 
   public void connectionException(Exception exception)

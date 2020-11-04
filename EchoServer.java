@@ -105,6 +105,7 @@ public class EchoServer extends AbstractServer
     }
 	
     EchoServer sv = new EchoServer(port);
+    ServerConsole sc = new ServerConsole(sv);
     
     try 
     {
@@ -114,6 +115,8 @@ public class EchoServer extends AbstractServer
     {
       System.out.println("ERROR - Could not listen for clients!");
     }
+    
+    sc.activate();
   }
 }
 //End of EchoServer class

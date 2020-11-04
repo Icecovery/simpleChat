@@ -1,6 +1,9 @@
 # Mac stuff
 .DS_Store
 
+#MS word stuff
+~$st*.docx
+
 # Compiled class file
 *.class
 
