@@ -68,7 +68,7 @@ public class ServerConsole implements ChatIF
             else
             {
                 display(message);
-                echoServer.sendToAllClients(message);
+                echoServer.sendToAllClients("SERVER MSG> " + message);
             }      
         } 
         catch (Exception e) 
@@ -105,7 +105,7 @@ public class ServerConsole implements ChatIF
         {
             echoServer.close();
         } catch (Exception e) {
-            //TODO: handle exception
+            
         }
         
         System.exit(0);
